@@ -14,6 +14,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PeopleSearch.Web", "src\Peo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Web.Tests", "src\PeopleSearch.Web.Tests\PeopleSearch.Web.Tests.csproj", "{8BAB0694-1D97-43D3-A31B-A22E3DBBA4DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Seeder", "src\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj", "{89D53E29-D905-4BE1-8C8B-9B021E9D496A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PeopleSearch.Contracts", "src\PeopleSearch.Contracts\PeopleSearch.Contracts.xproj", "{708ED5BF-33E9-4AE5-80DF-735BEA84C66D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +32,14 @@ Global
 		{8BAB0694-1D97-43D3-A31B-A22E3DBBA4DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BAB0694-1D97-43D3-A31B-A22E3DBBA4DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BAB0694-1D97-43D3-A31B-A22E3DBBA4DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89D53E29-D905-4BE1-8C8B-9B021E9D496A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D53E29-D905-4BE1-8C8B-9B021E9D496A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D53E29-D905-4BE1-8C8B-9B021E9D496A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D53E29-D905-4BE1-8C8B-9B021E9D496A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{708ED5BF-33E9-4AE5-80DF-735BEA84C66D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{708ED5BF-33E9-4AE5-80DF-735BEA84C66D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{708ED5BF-33E9-4AE5-80DF-735BEA84C66D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{708ED5BF-33E9-4AE5-80DF-735BEA84C66D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,5 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4384B83A-119F-4EDB-A55A-4878F44BF8A1} = {668E5157-AC3B-42C3-AC5B-3B7E2BFD79FA}
 		{8BAB0694-1D97-43D3-A31B-A22E3DBBA4DF} = {668E5157-AC3B-42C3-AC5B-3B7E2BFD79FA}
+		{89D53E29-D905-4BE1-8C8B-9B021E9D496A} = {668E5157-AC3B-42C3-AC5B-3B7E2BFD79FA}
+		{708ED5BF-33E9-4AE5-80DF-735BEA84C66D} = {668E5157-AC3B-42C3-AC5B-3B7E2BFD79FA}
 	EndGlobalSection
 EndGlobal
