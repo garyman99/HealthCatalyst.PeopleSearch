@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
@@ -61,18 +65,21 @@
   <ItemGroup>
     <Compile Include="Ioc\Exceptions\IocInitializationException.cs" />
     <Compile Include="Ioc\SeederModule.cs" />
-    <Compile Include="PersonFactories\Random\DateHelpers.cs" />
+    <Compile Include="Factories\Random\DateHelpers.cs" />
     <Compile Include="Ioc\SeederContainer.cs" />
-    <Compile Include="PersonFactories\Random\IRandomPersonFactory.cs" />
+    <Compile Include="Factories\Random\IRandomPersonFactory.cs" />
+    <Compile Include="Publishers\Api\FilePublisher.cs" />
     <Compile Include="Publishers\IPublisher.cs" />
+    <Compile Include="Publishers\Log\LogPublisher.cs" />
+    <Compile Include="SeedCoordinator.cs" />
     <Compile Include="Seeders\ISeeder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Publishers\Api\PeopleSearchApiIntegrator.cs" />
+    <Compile Include="Publishers\File\PeopleSearchApiPublisher.cs" />
     <Compile Include="Seeders\Random\RandomPersonSeeder.cs" />
-    <Compile Include="Seeders\RandomSeeder.cs" />
+    <Compile Include="Seeders\Random\RandomSeeder.cs" />
     <Compile Include="Seeders\Random\RandomSeederOptions.cs" />
-    <Compile Include="PersonFactories\Random\Simple\SimpleRandomPersonFactory.cs" />
+    <Compile Include="Factories\Random\Simple\SimpleRandomPersonFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

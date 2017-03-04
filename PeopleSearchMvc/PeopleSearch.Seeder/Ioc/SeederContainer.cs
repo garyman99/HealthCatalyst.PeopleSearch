@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Ninject;
 using PeopleSearch.Seeder.Ioc.Exceptions;
-using PeopleSearch.Seeder.Seeders;
 
 namespace PeopleSearch.Seeder.Ioc
 {
     public class SeederContainer
     {
-        private readonly IList<ISeeder> _seeders;
+        private readonly ISeedCoordinator _seedCoordinator;
 
-        public SeederContainer()
+        public SeederContainer(string[] args)
         {
             // note:  If I were you, I would wonder why I chose not to create the ninject kernal and get my 
-            //        seeders from there.  In my experience allowing access to a container in your main method
+            //        coorderinator from the main method.  In my experience allowing access to a container in your main method
             //        can easily lead to abuse of the container (ex: method/property injecting it in to dependencies
             //        and utilizing it as a service locator deep down in to your code).  I like to define
             //        a distinct interface around the kernel so that I can avoid any unintended anti-patterns
@@ -23,8 +19,8 @@ namespace PeopleSearch.Seeder.Ioc
             try
             {
                 var kernel = new StandardKernel();
-                kernel.Load(Assembly.GetExecutingAssembly());
-                _seeders = kernel.GetAll<ISeeder>().ToList();
+                kernel.Load(new SeederModule());
+                _seedCoordinator = kernel.Get<ISeedCoordinator>();
             }
             catch (Exception exception)
             {
@@ -32,9 +28,9 @@ namespace PeopleSearch.Seeder.Ioc
             }
         }
 
-        public IList<ISeeder> GetSeeders()
+        public ISeedCoordinator GetSeedCoordinator()
         {
-            return _seeders;
+            return _seedCoordinator;
         }
     }
 }

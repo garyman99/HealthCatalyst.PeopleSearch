@@ -64,11 +64,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="IocContainerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj">
+      <Project>{0CE442C1-5CC1-4DDF-B6BC-657145736CB3}</Project>
+      <Name>PeopleSearch.Seeder</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

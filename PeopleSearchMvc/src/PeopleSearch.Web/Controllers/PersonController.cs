@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
+using PeopleSearch.DataAccess;
 
 namespace PeopleSearch.Web.Controllers
 {
     public class PersonController : ApiController
     {
+        private PeopleSearchContext _context;
+
+        public PersonController(PeopleSearchContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/Person
         public IEnumerable<string> Get()
         {
@@ -18,17 +22,19 @@ namespace PeopleSearch.Web.Controllers
         // GET: api/Person/5
         public string Get(int id)
         {
-            return "value";
+            return _context.
         }
 
         // POST: api/Person
         public void Post([FromBody]string value)
         {
+
         }
 
         // PUT: api/Person/5
         public void Put(int id, [FromBody]string value)
         {
+
         }
 
         // DELETE: api/Person/5
