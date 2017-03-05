@@ -7,10 +7,11 @@ namespace PeopleSearch.DataAccess
     public class PersonInterest
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [Required]
-        public Guid PersonId { get; set; }
+        public int PersonId { get; set; }
 
         [Required]
         public string Interest { get; set; }

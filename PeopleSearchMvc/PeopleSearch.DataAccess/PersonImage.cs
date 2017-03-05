@@ -7,7 +7,7 @@ namespace PeopleSearch.DataAccess
     public class PersonImage
     {
         [Key]
-        public Guid PersonId { get; set; }
+        public int PersonId { get; set; }
 
         [Required]
         public byte[] Image { get; set; }

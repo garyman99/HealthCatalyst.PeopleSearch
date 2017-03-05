@@ -1,6 +1,6 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using PeopleSearch.Seeder.Console.Ioc;
 using PeopleSearch.Seeder.Ioc;
 
 namespace PeopleSearch.Seeder.Tests
@@ -12,7 +12,7 @@ namespace PeopleSearch.Seeder.Tests
         public void Resolving()
         {
             // ARRANGE
-            var seederContainer = new SeederContainer(new string[] {});
+            var seederContainer = new SeederContainer(new ConsoleLoggerModule());
 
             // ACT
             var seeders = seederContainer.GetSeedCoordinator();

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Web.Tests", "s
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A37994F5-81A1-4A7B-B9C1-109916FDC1AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Seeder", "PeopleSearch.Seeder\PeopleSearch.Seeder.csproj", "{0CE442C1-5CC1-4DDF-B6BC-657145736CB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Seeder.Console", "PeopleSearch.Seeder.Console\PeopleSearch.Seeder.Console.csproj", "{0CE442C1-5CC1-4DDF-B6BC-657145736CB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigCompany.Contracts", "BigCompany.Contracts\BigCompany.Contracts.csproj", "{3A26ECA1-2C30-4E2E-A64F-2AE120BB77FA}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "external", "external", "{5ACA85ED-318B-487E-9851-71BEC32BD8A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{672BB327-DA73-4BCF-8BC3-636C3EA3DE3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleSearch.Seeder", "src\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj", "{884DF3E5-8762-4CBA-95AB-931E7557974E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{E7B67399-F948-455F-B9C5-87086D77E2C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7B67399-F948-455F-B9C5-87086D77E2C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7B67399-F948-455F-B9C5-87086D77E2C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884DF3E5-8762-4CBA-95AB-931E7557974E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884DF3E5-8762-4CBA-95AB-931E7557974E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884DF3E5-8762-4CBA-95AB-931E7557974E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884DF3E5-8762-4CBA-95AB-931E7557974E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +77,6 @@ Global
 		{E7B67399-F948-455F-B9C5-87086D77E2C0} = {A37994F5-81A1-4A7B-B9C1-109916FDC1AF}
 		{5ACA85ED-318B-487E-9851-71BEC32BD8A7} = {A37994F5-81A1-4A7B-B9C1-109916FDC1AF}
 		{672BB327-DA73-4BCF-8BC3-636C3EA3DE3D} = {A37994F5-81A1-4A7B-B9C1-109916FDC1AF}
+		{884DF3E5-8762-4CBA-95AB-931E7557974E} = {A37994F5-81A1-4A7B-B9C1-109916FDC1AF}
 	EndGlobalSection
 EndGlobal
