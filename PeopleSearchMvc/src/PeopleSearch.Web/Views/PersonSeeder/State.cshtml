@@ -7,7 +7,88 @@
 
 <h2>People Seeder</h2>
 
-<form>
-    <button value="Start" ></button>
-    <button value="Stop"></button>
-</form>
+<div class="panel panel-defaul">
+    <div class="panel-header">
+        Seeder Controls
+    </div>
+    <div class="panel-body">
+        <form name="seedForm" class="form-inline">
+            <div class="form-group">
+                <div class="form-control">
+                    <button id="startButton" value="Start"></button>
+                </div>
+                <div class="form-control">
+                    <button id="stopButton" value="Start"></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="seederInstance" class="panel panel-default">
+    <div class="panel-header">
+        Seeder
+        <span class="pull-right">
+            <span class="sm-statusIndicator">Off</span>
+        </span>
+    </div>
+    <div class="panel-body">
+        <pre class="sm-seedLog"></pre>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    var seedModuleConstructor = (function (seederElementName) {
+        var startUrl = "/PersonSeeder/StartSeeding";
+        var stopUrl = "/PersonSeeder/StopSeeding";
+
+        var seederElement = $(document.getElementById(seederElementName));
+        if (seederElement == null || seederElement.length === 0) {
+            alert('There was an error creating the seeder module:\r\n' + seederElementName + ' could not be found');
+            return null;
+        }
+
+        var seederStatuses = seederElement.find("statusIndicator");
+
+        var start = function () {
+            $.ajax({
+                url: startUrl,
+                datatype: "text",
+                type: "POST",
+                success: function (data) {
+                    seederStatuses.text("Started");
+                    seederStatuses.addClass("sm-status-started");
+                },
+                error: function () {
+                    seederStatuses.text("Errored");
+                    seederStatuses.addClass("sm-status-errored");
+                }
+            });
+        }
+
+        var stop = function () {
+            $.ajax({
+                url: stopUrl,
+                datatype: "text",
+                type: "POST",
+                success: function (data) {
+                    seederStatuses.text("Stopped");
+                    seederStatuses.addClass("sm-status-stopped");
+                },
+                error: function () {
+                    seederStatuses.text("Errored");
+                    seederStatuses.addClass("sm-status-errored");
+                }
+            });
+        }
+
+        return {
+            start: start(),
+            stop: stop()
+        }
+    });
+
+    var seedModule = seedModuleConstructor('seederInstance');
+
+</script>
