@@ -5,8 +5,8 @@ namespace PeopleSearch.Seeder.Publishers
 {
     public interface IPublisher
     {
-        Task Publish<T>(T person);
+        Task Publish<T>(T input);
 
-        Task Publish<T>(T person, CancellationToken cancellationToken);
+        Task Publish<T>(T input, CancellationToken cancellationToken);
     }
 }

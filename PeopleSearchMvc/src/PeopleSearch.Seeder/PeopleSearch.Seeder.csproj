@@ -62,10 +62,14 @@
   <ItemGroup>
     <Compile Include="Factories\Random\DateHelpers.cs" />
     <Compile Include="Factories\Random\IRandomPersonFactory.cs" />
+    <Compile Include="Factories\Random\RandomUserMe\LessSimpleRandomPersonFactory.cs" />
+    <Compile Include="Factories\Random\StaticData.cs" />
     <Compile Include="Factories\Random\Simple\SimpleRandomPersonFactory.cs" />
     <Compile Include="Ioc\Exceptions\IocInitializationException.cs" />
     <Compile Include="Ioc\SeederContainer.cs" />
     <Compile Include="Ioc\SeederModule.cs" />
+    <Compile Include="Ioc\TaskModule.cs" />
+    <Compile Include="ISeedCoordinator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publishers\Api\PeopleSearchApiPublisher.cs" />
     <Compile Include="Publishers\File\FilePublisher.cs" />
@@ -75,6 +79,7 @@
     <Compile Include="Seeders\ISeeder.cs" />
     <Compile Include="Seeders\Random\RandomPersonSeeder.cs" />
     <Compile Include="Seeders\Random\RandomSeederOptions.cs" />
+    <Compile Include="SeedingState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Publishers\MessageQueue\" />

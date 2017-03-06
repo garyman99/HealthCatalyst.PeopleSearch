@@ -6,13 +6,16 @@ namespace PeopleSearch.Seeder.Factories.Random.Simple
     {
         public Person Create(int seed)
         {
-            return new Person
+            var person = new Person
             {
                 FirstName = "First",
                 LastName = "Last",
                 DateOfBirth = DateHelpers.RandomDate(1935, 2005, seed),
-                ProfilePictureUrl = "",
+                ImageBase64 = "",
+                Interests = StaticData.RandomInterests(seed),
             };
+
+            return person;
         }
     }
 }

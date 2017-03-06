@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Ninject.Modules;
 using PeopleSearch.DataAccess;
-using PeopleSearch.Web.Controllers;
 using PeopleSearch.Web.Controllers.API;
 using PeopleSearch.Web.Controllers.MVC;
 
@@ -11,8 +9,6 @@ namespace PeopleSearch.Web.Ioc
     {
         public override void Load()
         {
-            Bind<TaskFactory>().ToSelf();
-
             // Data Access
             Bind<PeopleSearchContext>().ToSelf();
 

@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
 using Common.Logging;
 using Common.Logging.Simple;
 using Ninject.Modules;
 using PeopleSearch.Seeder.Factories.Random;
+using PeopleSearch.Seeder.Factories.Random.RandomUserMe;
 using PeopleSearch.Seeder.Factories.Random.Simple;
 using PeopleSearch.Seeder.Publishers;
 using PeopleSearch.Seeder.Publishers.Api;
@@ -16,9 +16,9 @@ namespace PeopleSearch.Seeder.Ioc
     {
         public override void Load()
         {
-            Bind<TaskFactory>().ToSelf();
-
-            Bind<IRandomPersonFactory>().To<SimpleRandomPersonFactory>();
+            //Bind<IRandomPersonFactory>().To<SimpleRandomPersonFactory>();
+            Bind<IRandomPersonFactory>().To<LessSimpleRandomPersonFactory>();
+            
             Bind<IPublisher>().To<LogPublisher>();
             Bind<IPublisher>().To<PeopleSearchApiPublisher>()
                 .WithConstructorArgument("apiUri", "http://localhost:63949/api/Person");
@@ -28,7 +28,7 @@ namespace PeopleSearch.Seeder.Ioc
             //TaskFactory taskFactory, ILog log, RandomSeederOptions options,
             //IRandomPersonFactory randomPersonFactory, IEnumerable<IPublisher> publisherses
 
-            Bind<ISeedCoordinator>().To<SeedCoordinator>();
+            Bind<ISeedCoordinator>().To<SeedCoordinator>().InSingletonScope();
         }
     }
 }

@@ -16,16 +16,14 @@ namespace PeopleSearch.Seeder.Publishers.Log
             _taskFactory = taskFactory;
         }
 
-        public async Task Publish<T>(T person)
+        public async Task Publish<T>(T input)
         {
-            var jsonPerson = JsonConvert.SerializeObject(person);
-            await _taskFactory.StartNew(()=>_log.Debug(jsonPerson));
+            await _taskFactory.StartNew(()=>_log.Debug(input));
         }
 
-        public async Task Publish<T>(T person, CancellationToken cancellationToken)
+        public async Task Publish<T>(T input, CancellationToken cancellationToken)
         {
-            var jsonPerson = JsonConvert.SerializeObject(person);
-            await _taskFactory.StartNew(() => _log.Debug(jsonPerson), cancellationToken);
+            await _taskFactory.StartNew(() => _log.Debug(input), cancellationToken);
         }
     }
 }

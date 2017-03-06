@@ -11,7 +11,6 @@ namespace PeopleSearch.Seeder.Seeders.Random
 {
     public class RandomPersonSeeder : ISeeder
     {
-
         private readonly TaskFactory _taskFactory;
         private readonly ILog _log;
         private readonly RandomSeederOptions _options;
@@ -35,7 +34,7 @@ namespace PeopleSearch.Seeder.Seeders.Random
         {
             // define a long-running action that will be used to run while the process isnt cancelled and while we 
             // haven't exceeded the maximum seed amount
-            Action producerTask = async () =>
+            Action producerAction = () =>
             {
                 var count = 0;
                 while (cancellationToken.IsCancellationRequested == false && count < _options.MaxSeedAmount)
@@ -47,14 +46,14 @@ namespace PeopleSearch.Seeder.Seeders.Random
                     {
                         publishTasks.Add(publisher.Publish(random, cancellationToken));
                     }
-                    Task.WaitAll(publishTasks.ToArray());
-
+                    Task.WaitAll(publishTasks.ToArray(), cancellationToken);
+                    
                     // delay if we've exceeded the initial seed amount
                     if (count > _options.InitialSeedAmount)
                     {
                         var delay = (int)_options.Delay.TotalMilliseconds;
-                        _log.Debug($"Delaying by {delay} milliseconds");
-                        await Task.Delay(delay, cancellationToken).ContinueWith(T => { });
+                        _log.Debug($"Delaying next publish by {delay} milliseconds");
+                        cancellationToken.WaitHandle.WaitOne(_options.Delay);
                     }
 
                     count += 1;
@@ -66,7 +65,7 @@ namespace PeopleSearch.Seeder.Seeders.Random
             };
 
             // start the long-running process within a task and give the task back to the consumer to await
-            return _taskFactory.StartNew(producerTask, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+            return _taskFactory.StartNew(producerAction, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
         }
     }
 }

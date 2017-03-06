@@ -13,19 +13,19 @@ namespace PeopleSearch.Seeder.Publishers.Api
             _apiUri = apiUri;
         }
         
-        public async Task Publish<T>(T person)
+        public async Task Publish<T>(T input)
         {
             using (var client = new HttpClient())
             {
-                await client.PostAsJsonAsync(_apiUri, person);
+                await client.PostAsJsonAsync(_apiUri, input);
             }
         }
 
-        public async Task Publish<T>(T person, CancellationToken cancellationToken)
+        public async Task Publish<T>(T input, CancellationToken cancellationToken)
         {
             using (var client = new HttpClient())
             {
-                await client.PostAsJsonAsync(_apiUri, person, cancellationToken);
+                await client.PostAsJsonAsync(_apiUri, input, cancellationToken);
             }
         }
     }

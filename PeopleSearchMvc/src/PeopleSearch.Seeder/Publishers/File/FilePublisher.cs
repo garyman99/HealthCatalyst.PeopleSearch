@@ -21,17 +21,17 @@ namespace PeopleSearch.Seeder.Publishers.File
             _destinationFileStream = new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
         }
 
-        public async Task Publish<T>(T person)
+        public async Task Publish<T>(T input)
         {
-            var jsonPerson = JsonConvert.SerializeObject(person);
+            var jsonPerson = JsonConvert.SerializeObject(input);
             byte[] encodedText = Encoding.Unicode.GetBytes(jsonPerson);
 
             await _destinationFileStream.WriteAsync(encodedText, 0, encodedText.Length);
         }
 
-        public async Task Publish<T>(T person, CancellationToken cancellationToken)
+        public async Task Publish<T>(T input, CancellationToken cancellationToken)
         {
-            var jsonPerson = JsonConvert.SerializeObject(person);
+            var jsonPerson = JsonConvert.SerializeObject(input);
             byte[] encodedText = Encoding.Unicode.GetBytes(jsonPerson);
 
             await _destinationFileStream.WriteAsync(encodedText, 0, encodedText.Length, cancellationToken);

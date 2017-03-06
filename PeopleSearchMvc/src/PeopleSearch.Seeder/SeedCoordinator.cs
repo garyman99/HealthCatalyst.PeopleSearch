@@ -8,19 +8,14 @@ using PeopleSearch.Seeder.Seeders;
 
 namespace PeopleSearch.Seeder
 {
-    public interface ISeedCoordinator
-    {
-        Task StartProcessing();
-        Task Cancel();
-    }
-
     public class SeedCoordinator : ISeedCoordinator
     {
         private readonly TaskFactory _taskFactory;
         private readonly List<ISeeder> _seeders;
         private readonly ILog _log;
 
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
+        private Task _processingTask;
 
         public SeedCoordinator(TaskFactory taskFactory, ILog log, IEnumerable<ISeeder> seeders)
         {
@@ -28,12 +23,16 @@ namespace PeopleSearch.Seeder
             _log = log;
             _seeders = seeders.ToList();
 
-            _cancellationTokenSource = new CancellationTokenSource();
+            State = SeedingState.Uninitiated;
         }
+
+        public SeedingState State { get; private set; }
 
         public async Task StartProcessing()
         {
-            await _taskFactory.StartNew(() =>
+            State = SeedingState.Seeding;
+            _cancellationTokenSource = new CancellationTokenSource();
+            _processingTask = _taskFactory.StartNew(() =>
             {
                 _log.Info("Seed coordinator is starting");
                 if (_seeders.Any() == false)
@@ -49,26 +48,30 @@ namespace PeopleSearch.Seeder
                         seedingTasks.Add(seeder.StartSeeding(_cancellationTokenSource.Token));
                     }
 
-                    // setup a message for when they're done
-                    Action<Task> action = T =>
-                    {
-                        var seedingCompleteMessage = _cancellationTokenSource.IsCancellationRequested
-                            ? "\tSeeders were successfully cancelled"
-                            : "\tAll seeders completed without cancellation";
-                        _log.Info(seedingCompleteMessage);
-                    };
-                    Task.WhenAll(seedingTasks).ContinueWith(action, _cancellationTokenSource.Token);
+                    Task.WaitAll(seedingTasks.ToArray());
                 }
                 catch (Exception unhandledException)
                 {
                     _log.Error($"Unhandled Excpetion in Seeder.  Details: \r\n{unhandledException}");
                 }
             });
+
+            await _processingTask;
         }
 
         public async Task Cancel()
         {
-            await _taskFactory.StartNew(() => _cancellationTokenSource.Cancel());
+            if (_cancellationTokenSource == null)
+            {
+                throw new Exception("Unable to cancel seeding because the cancellation token is null");
+            }
+            _cancellationTokenSource.Cancel();
+            
+            await _processingTask.ContinueWith((T) =>
+            {
+                _log.Info("\tSeeders were successfully cancelled");
+                State = SeedingState.Cancelled;
+            });
         }
     }
 }

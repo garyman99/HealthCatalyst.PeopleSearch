@@ -15,10 +15,13 @@ namespace PeopleSearch.Web.Controllers.API
             _context = context;
         }
 
-        // GET: api/Person
-        public IEnumerable<string> Get()
+        // GET: api/Person/search
+        public string Get(string searchString)
         {
-            return new string[] { "value1", "value2" };
+            var matches = _context.People.Where(p => p.FirstName.Contains(searchString)
+                                                     || p.LastName.Contains(searchString)).ToList();
+            
+            return JsonConvert.SerializeObject(matches);
         }
 
         // GET: api/Person/5
@@ -34,6 +37,11 @@ namespace PeopleSearch.Web.Controllers.API
         {
             // modify or update an existing person
 
+            if (value == null)
+            {
+                return;
+            }
+
             var dtoPerson = JsonConvert.DeserializeObject<BigCompany.Contracts.Person>(value);
             if (dtoPerson != null)
             {
@@ -41,7 +49,7 @@ namespace PeopleSearch.Web.Controllers.API
                 if (dataAccessPerson == null)
                 {
                     // create new entity
-                    Post(value);
+                    Put(value);
                 }
                 else
                 {
@@ -50,24 +58,31 @@ namespace PeopleSearch.Web.Controllers.API
                     dataAccessPerson.FirstName = dtoPerson.FirstName;
                     dataAccessPerson.LastName = dtoPerson.LastName;
                     dataAccessPerson.Interests.Clear();
+                    // todo: separate API calls for posting image(s)
+                    if (string.IsNullOrEmpty(dtoPerson.ImageBase64) == false)
+                    {
+                        dataAccessPerson.Images.Add(new PersonImage { ImageBase64 = dtoPerson.ImageBase64 });
+                    }
+                    // todo: separate API calls for posting interests  ex: /api/person/1/interests/1
                     foreach (var dtoInterest in dtoPerson.Interests)
                     {
                         dataAccessPerson.Interests.Add(new PersonInterest { Interest = dtoInterest });
                     }
-                    if (string.IsNullOrEmpty(dtoPerson.ProfilePictureUrl) == false)
-                    {
-                        //dataAccessPerson.Images.Add(new PersonImage {});
-                    }
                     _context.SaveChanges();
                 }
             }
-           
         }
 
         // PUT: api/Person/
         public void Put([FromBody]string value)
         {
             // create a new person (or overwrite)--the result of this call should always be the same!
+
+            if (value == null)
+            {
+                return;
+            }
+
             var dtoPerson = JsonConvert.DeserializeObject<BigCompany.Contracts.Person>(value);
             if (dtoPerson != null)
             {
@@ -82,21 +97,28 @@ namespace PeopleSearch.Web.Controllers.API
                     LastName = dtoPerson.LastName,
                     Interests = new List<PersonInterest>()
                 };
-                if (string.IsNullOrEmpty(dtoPerson.ProfilePictureUrl) == false)
+                if (string.IsNullOrEmpty(dtoPerson.ImageBase64) == false)
                 {
-                    //dataAccessPerson.Images.Add(new PersonImage {});
+                    dataAccessPerson.Images.Add(new PersonImage {ImageBase64 = dtoPerson.ImageBase64});
                 }
                 foreach (var dtoInterest in dtoPerson.Interests)
                 {
                     dataAccessPerson.Interests.Add(new PersonInterest { Interest = dtoInterest });
                 }
                 _context.People.Add(dataAccessPerson);
+                _context.SaveChanges();
             }
         }
 
         // DELETE: api/Person/5
         public void Delete(int id)
         {
+            var person = _context.People.FirstOrDefault(p => p.Id == id);
+            if (person != null)
+            {
+                _context.People.Remove(person);
+                _context.SaveChanges();
+            }
         }
     }
 }

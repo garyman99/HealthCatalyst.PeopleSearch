@@ -1,0 +1,48 @@
+﻿@model PeopleSearch.Web.Models.PersonSeederStateModel
+
+@{
+    ViewBag.Title = "People Seeder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        var seederModule = seedModuleConstructor("seederInstance");
+    </script>
+}
+
+<br/>
+<div class="container">
+    <div id="seederInstance" class="panel panel-default">
+        <div class="panel-heading">
+            People Seeder
+            <span class="pull-right">
+                Status: <span class="sm-statusIndicator">Off</span>
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="sm-loading text-center">Loading...</div>
+            <div class="row sm-content">
+                <div class="col-sm-2">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Seeder Controls</div>
+                        <div class="panel-body">
+                            <form name="seedForm" class="form-inline" onsubmit="return false">
+                                <button class="sm-startButton">Start</button>&nbsp;
+                                <button class="sm-stopButton" disabled="disabled">Stop</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Log</div>
+                        <div class="panel-body">
+                            <pre class="sm-log"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
