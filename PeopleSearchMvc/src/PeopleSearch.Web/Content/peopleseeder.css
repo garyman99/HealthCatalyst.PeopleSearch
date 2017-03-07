@@ -1,0 +1,22 @@
+﻿.sm-startButton{}
+.sm-stopButton{}
+.sm-statusIndicator {
+    font-weight: bold;
+}
+.sm-statusIndicator.sm-started {
+    color: forestgreen;
+}
+.sm-statusIndicator.sm-stopped {
+    color: darkgray;
+}
+.sm-statusIndicator.sm-errored {
+    color: red;
+}
+
+pre.sm-log {
+    height: 400px;
+    overflow: auto !important;
+    overflow-y: scroll;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}
