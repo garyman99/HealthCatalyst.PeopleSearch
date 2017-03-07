@@ -1,5 +1,7 @@
 using Ninject.Modules;
 using PeopleSearch.DataAccess;
+using PeopleSearch.DataAccess.Entities.People;
+using PeopleSearch.DataAccess.Repositories;
 using PeopleSearch.Web.Controllers.API;
 using PeopleSearch.Web.Controllers.MVC;
 
@@ -11,6 +13,7 @@ namespace PeopleSearch.Web.Ioc
         {
             // Data Access
             Bind<PeopleSearchContext>().ToSelf();
+            Bind<IPersonRepository>().To<PersonRepository>();
 
             // API
             Bind<PersonController>().ToSelf();

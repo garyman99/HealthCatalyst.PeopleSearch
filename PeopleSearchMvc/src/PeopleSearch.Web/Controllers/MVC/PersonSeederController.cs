@@ -5,7 +5,7 @@ using Common.Logging.Simple;
 using PeopleSearch.Seeder;
 using PeopleSearch.Web.Models;
 
-namespace PeopleSearch.Web.Controllers
+namespace PeopleSearch.Web.Controllers.MVC
 {
     public class PersonSeederController : Controller
     {

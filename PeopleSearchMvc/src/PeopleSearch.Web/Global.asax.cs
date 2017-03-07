@@ -87,7 +87,11 @@ namespace PeopleSearch.Web
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
+            bundles.Add(new ScriptBundle("~/bundles/peopleSearch").Include(
+                "~/Scripts/PeopleSearch/peoplesearch.module.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/peopleSeeder").Include(
+                "~/Scripts/PeopleSearch/peoplesearch.utilityservice.js",
                 "~/Scripts/PeopleSearch/peopleseeder.module.js"));
 
             bundles.Add(new StyleBundle("~/bundles/peopleSeederStyle").Include(

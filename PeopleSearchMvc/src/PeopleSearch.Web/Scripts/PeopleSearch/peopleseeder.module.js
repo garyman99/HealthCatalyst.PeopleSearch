@@ -1,258 +1,322 @@
 ﻿
 // todo: this is tightly coupled to jQuery--might be good to inject in an abstraction
-var seedModuleConstructor = (function (moduleContainerId) {
-    // create a container to hold each of the UI elements and the logic around them
-    var moduleElements = function (containerId) {
-        var seederContainer = $(document.getElementById(containerId));
-        if (seederContainer == null || seederContainer.length === 0) {
-            throw "Seeder Module Exception: Seeder container was not specified";
-        }
+var SeederModuleFactory = (function ($, utilityService) {
+    $ = $ || jQuery;
 
-        // "base" element type
-        function SeederElement() {
-            this.instances = [];
+    // define some that can be utilized by the module service
+    var SeederEventTypes = {
+        Processing: "processing",
+        Stopped: "stopped",
+        Errored: "errored",
+        Logs: "logs"
+    };
+    function SeederEventListener() { }
+    SeederEventListener.prototype.HandleSeederEvent = function (eventType, eventArgs) { }
+
+    // base ui element type
+    // note: utilizing prototype "inheritance" to allow sharing of common functionality
+    function UiElement() {
+        this.instances = [];
+    }
+    utilityService.inherit(SeederEventListener, UiElement);
+    UiElement.prototype.GetInstances = function () { return this.instances; };
+    UiElement.prototype.Initialize = function (uiContainer, required, selector) {
+        var instances = uiContainer.find(selector);
+        if (required && instances.length === 0) {
+            throw "Seeder Module Exception: Required element with selector " +
+                selector +
+                " returned no elements";
         }
-        SeederElement.prototype.GetInstances = function () { return this.instances; };
-        SeederElement.prototype.Initialize = function (required, selector) {
-            var instances = seederContainer.find(selector);
-            if (required && instances.length === 0) {
-                throw "Seeder Module Exception: Required element with selector " +
-                    selector +
-                    " returned no elements";
+        this.instances = instances;
+    };
+    UiElement.prototype.Disable = function () {
+        this.GetInstances().attr("disabled", "disabled");
+    }
+    UiElement.prototype.Enable = function () {
+        this.GetInstances().removeAttr("disabled");
+    }
+    UiElement.prototype.HandleSeederEvent = function (eventType, eventArgs) {
+        var instances = this.GetInstances();
+        if (instances != null && instances.length !== 0) {
+            switch (eventType) {
+                case SeederEventTypes.Processing:
+                    instances.addClass("sm-started");
+                    instances.removeClass("sm-stopped");
+                    instances.removeClass("sm-errored");
+                    break;
+                case SeederEventTypes.Stopped:
+                    instances.addClass("sm-stopped");
+                    instances.removeClass("sm-started");
+                    instances.removeClass("sm-errored");
+                    break;
+                case SeederEventTypes.Errored:
+                    instances.addClass("sm-errored");
+                    instances.removeClass("sm-started");
+                    instances.removeClass("sm-stopped");
+                    break;
+                case SeederEventTypes.Logs:
+                    // nothing to see here
+                    break;
+                default:
+                    console.log("Unknown event type was received: " + eventType);
+                    break;
             }
-            this.instances = instances;
-        };
-        SeederElement.prototype.Disable = function () {
-            this.GetInstances().attr("disabled", "disabled");
         }
-        SeederElement.prototype.Enable = function () {
-            this.GetInstances().removeAttr("disabled");
-        }
-        SeederElement.prototype.HandleProcessing = function () {
-            this.GetInstances().addClass("sm-started");
-            this.GetInstances().removeClass("sm-stopped");
-            this.GetInstances().removeClass("sm-errored");
-        }
-        SeederElement.prototype.HandleProcessingStopped = function () {
-            this.GetInstances().addClass("sm-stopped");
-            this.GetInstances().removeClass("sm-started");
-            this.GetInstances().removeClass("sm-errored");
-        }
-        SeederElement.prototype.HandleError = function () {
-            this.GetInstances().addClass("sm-errored");
-            this.GetInstances().removeClass("sm-started");
-            this.GetInstances().removeClass("sm-stopped");
-        }
-        SeederElement.prototype.BindOnClick = function (event) {
-            var instances = this.GetInstances();
+    }
+
+    // base button 
+    function Button() { }
+    utilityService.inherit(UiElement, Button);
+    Button.prototype.BindClickEvent = function (event) {
+        var instances = this.GetInstances();
+        if (instances != null && instances.length !== 0) {
             instances.on("click", event);
         }
+    }
 
-        // start button(s)
-        function StartButton() {}
-        StartButton.prototype = Object.create(SeederElement.prototype); // copy prototype on base
-        StartButton.prototype.HandleProcessing = function () {
-            SeederElement.prototype.HandleProcessing.call(this);
-            SeederElement.prototype.Disable.call(this);
+    // start button
+    function StartButton() { }
+    utilityService.inherit(Button, StartButton);
+    StartButton.prototype.HandleSeederEvent = function (eventType, eventArgs) {
+        // call parent
+        UiElement.prototype.HandleSeederEvent.call(this, eventType, eventArgs);
+        var instances = this.GetInstances();
+        if (instances != null && instances.length !== 0) {
+            switch (eventType) {
+                case SeederEventTypes.Processing:
+                    UiElement.prototype.Disable.call(this);
+                    break;
+                case SeederEventTypes.Stopped:
+                    UiElement.prototype.Enable.call(this);
+                    break;
+                case SeederEventTypes.Errored:
+                    UiElement.prototype.Enable.call(this);
+                    break;
+            }
         }
-        StartButton.prototype.HandleProcessingStopped = function () {
-            SeederElement.prototype.HandleProcessingStopped.call(this);
-            SeederElement.prototype.Enable.call(this);
-        }
+    }
 
-        // stop button(s)
-        function StopButton() { }
-        StopButton.prototype = Object.create(SeederElement.prototype); // copy prototype on base
-        StopButton.prototype.HandleProcessing = function () {
-            SeederElement.prototype.HandleProcessing.call(this);
-            SeederElement.prototype.Enable.call(this);
+    // stop button
+    function StopButton() { }
+    utilityService.inherit(Button, StopButton);
+    StopButton.prototype.HandleSeederEvent = function (eventType, eventArgs) {
+        // call parent
+        UiElement.prototype.HandleSeederEvent.call(this, eventType, eventArgs);
+        var instances = this.GetInstances();
+        if (instances != null && instances.length !== 0) {
+            switch (eventType) {
+                case SeederEventTypes.Processing:
+                    UiElement.prototype.Enable.call(this);
+                    break;
+                case SeederEventTypes.Stopped:
+                    UiElement.prototype.Disable.call(this);
+                    break;
+                case SeederEventTypes.Errored:
+                    UiElement.prototype.Disable.call(this);
+                    break;
+            }
         }
-        StopButton.prototype.HandleProcessingStopped = function () {
-            SeederElement.prototype.HandleProcessingStopped.call(this);
-            SeederElement.prototype.Disable.call(this);
-        }
+    }
 
-        // status indicators
-        function StatusIndicator() { }
-        StatusIndicator.prototype = Object.create(SeederElement.prototype); // copy prototype on base
-        StatusIndicator.prototype.HandleProcessing = function () {
-            SeederElement.prototype.HandleProcessing.call(this);
-            this.GetInstances().text("Started");
+    // status indicators
+    function StatusIndicator() { }
+    utilityService.inherit(UiElement, StatusIndicator);
+    StatusIndicator.prototype.HandleSeederEvent = function (eventType, eventArgs) {
+        // call parent
+        UiElement.prototype.HandleSeederEvent.call(this, eventType, eventArgs);
+        var instances = this.GetInstances();
+        if (instances !== null && instances !== undefined && instances.length !== 0) {
+            switch (eventType) {
+                case SeederEventTypes.Processing:
+                    instances.text("Started");
+                    break;
+                case SeederEventTypes.Stopped:
+                    instances.text("Stopped");
+                    break;
+                case SeederEventTypes.Errored:
+                    instances.text("Errored");
+                    break;
+            }
         }
-        StatusIndicator.prototype.HandleProcessingStopped = function () {
-            SeederElement.prototype.HandleProcessingStopped.call(this);
-            this.GetInstances().text("Stopped");
-        }
-        StatusIndicator.prototype.HandleError = function () {
-            SeederElement.prototype.HandleError.call(this);
-            this.GetInstances().text("Errored");
-        }
+    }
 
-        // logs
-        function SeedLogElement() { }
-        SeedLogElement.prototype = Object.create(SeederElement.prototype); // copy prototype on base
-        SeedLogElement.prototype.HandleError = function (errorMessage) {
-            SeederElement.prototype.HandleError.call(this);
-            this.GetInstances().append("Errored\r\n");
-            this.GetInstances().append(errorMessage + "\r\n");
-        }
-        SeedLogElement.prototype.HandleStateUpdate = function (stateData) {
-            var instances = this.GetInstances();
-            for (var i = 0; i < stateData.LogMessages.length; i++) {
-                instances.append(stateData.LogMessages[i] + "\r\n");
+    // logs
+    function SeedLog() { }
+    utilityService.inherit(UiElement, SeedLog);
+    SeedLog.prototype.HandleSeederEvent = function (eventType, eventArgs) {
+        // call parent
+        UiElement.prototype.HandleSeederEvent.call(this, eventType, eventArgs);
+        var instances = this.GetInstances();
+        if (instances != null && instances.length !== 0) {
+            switch (eventType) {
+                case SeederEventTypes.Errored:
+                    instances.append("Errored\r\n");
+                    instances.append(eventArgs + "\r\n");
+                    break;
+                case SeederEventTypes.Logs:
+                    for (var i = 0; i < eventArgs.length; i++) {
+                        instances.append(eventArgs[i] + "\r\n");
+                    }
+                    break;
             }
 
-            for (var i = 0; i < instances.length; i++) {
-                var instance = instances[i];
+            // scroll to the bottom of the log(s)
+            for (var j = 0; j < instances.length; j++) {
+                var instance = instances[j];
                 instance.scrollTop = instance.scrollHeight;
             }
         }
+    }
 
-        // create the instances of the types above
-        var startButton = new StartButton();
-        startButton.Initialize(true, ".sm-startButton");
-        var stopButton = new StopButton();
-        stopButton.Initialize(false, ".sm-stopButton");
-        var statusIndicator = new StatusIndicator();
-        statusIndicator.Initialize(false,".sm-statusIndicator");
-        var log = new SeedLogElement();
-        log.Initialize(false, ".sm-log");
-        var allElements = [startButton, stopButton, statusIndicator, log];
+    // private method for creating an instance of the module
+    var createSeederModule = (function(moduleContainerId) {
 
-        // todo: could prototype these methods--no need for them to be created with 
-        //       each instance of the module
-        var handleProcessing = function () {
-            for (var i = 0; i < allElements.length; i++) {
-                allElements[i].HandleProcessing();
+        // ui elements container
+        var uiElements = function(uiContainerId) {
+            var uiContainer = $(document.getElementById(uiContainerId));
+            if (uiContainer == null || uiContainer.length === 0) {
+                throw "Seeder Module Exception: Seeder container was not specified";
             }
-        }
-        var handleProcessingStopped = function () {
-            for (var i = 0; i < allElements.length; i++) {
-                allElements[i].HandleProcessingStopped();
-            }
-        }
-        var handleError = function (errorMessage) {
-            for (var i = 0; i < allElements.length; i++) {
-                allElements[i].HandleError(errorMessage);
-            }
-        }
-        var handleStateUpdate = function (stateData) {
-            if (stateData.Started === true) {
-                handleProcessing();
-            } else if (stateData.Stopped === true) {
-                handleProcessingStopped();
-            }
-            log.HandleStateUpdate(stateData);
-        }
-        var bindStartAndStopEvents = function (startEvent, stopEvent) {
-            startButton.BindOnClick(startEvent);
-            stopButton.BindOnClick(stopEvent);
-        }
 
-        return {
-            SeederContainer: seederContainer,
-            HandleProcessing: handleProcessing,
-            HandleProcessingStopped: handleProcessingStopped,
-            HandleError: handleError,
-            HandleStateUpdate: handleStateUpdate,
-            BindStartAndStopEvents: bindStartAndStopEvents
-        }
-    }(moduleContainerId); // instantiate using the provided module container id
+            // instances of the form elements
+            var start = new StartButton();
+            var stop = new StopButton();
+            var statusIndicator = new StatusIndicator();
+            var log = new SeedLog();
+            var allElements = [start, stop, statusIndicator, log];
+            start.Initialize(uiContainer, true, ".sm-startButton");
+            stop.Initialize(uiContainer, false, ".sm-stopButton");
+            statusIndicator.Initialize(uiContainer, false, ".sm-statusIndicator");
+            log.Initialize(uiContainer, false, ".sm-log");
 
-    // define the functions for interacting with the controller
-    var controllerService = function(handleSeedingStartDelegate, handleSeedingStopDelegate, handleErrorDelegate) {
-        var startUrl = "/PersonSeeder/StartSeeding";
-        var stopUrl = "/PersonSeeder/StopSeeding";
+            // event handler for the UI container
+            var handleEvent = function(seederEventType, eventArgument) {
+                eventArgument = eventArgument || null;
 
-        var start = function () {
-            $.ajax({
-                url: startUrl,
-                datatype: "text",
-                type: "POST",
-                success: function(data) {
-                    if (data.Started === true) {
-                        handleSeedingStartDelegate();
-                    } else if (data.Errored === true) {
-                        handleErrorDelegate(data.ErrorMessage);
-                    }
-                },
-                error: function(data) {
-                    handleErrorDelegate(data);
-                }
-            });
-        }
-
-        var stop = function() {
-            $.ajax({
-                url: stopUrl,
-                datatype: "text",
-                type: "POST",
-                success: function(data) {
-                    if (data.Started === false) {
-                        handleSeedingStopDelegate();
-                    } else if (data.Errored === true) {
-                        handleErrorDelegate(data.ErrorMessage);
-                    }
-                },
-                error: function(data) {
-                    handleErrorDelegate(data);
-                }
-            });
-        }
-
-        return {
-            StartSeeding: start,
-            StopSeeding: stop
-        }
-    }(moduleElements.HandleProcessing, moduleElements.HandleProcessingStopped, moduleElements.HandleError);
-
-    // create a recursive function for pulling
-    var stateMonitor = (function (stateUpdateDelegate) {
-        var stateUrl = "/PersonSeeder/GetState";
-        var delay = 5000;
-
-        var getState = function() {
-            $.ajax({
-                url: stateUrl,
-                datatype: "text",
-                type: "POST",
-                success: function(data) {
-                    stateUpdateDelegate(data);
-                },
-                error: function() {
-                    console.log("Error getting state");
-                },
-                complete: function () {
-                    // todo: do not like having ui related code in here....
-                    if ($(".sm-loading").is(":visible")) {
-                        $(".sm-loading").hide();
-                    }
-                    if ($(".sm-content").is(":hidden")) {
-                        $(".sm-content").show();
+                // in some cases we need to propogate additional events
+                var allEvents = [];
+                allEvents.push({ eventType: seederEventType, eventArg: eventArgument });
+                if (seederEventType === SeederEventTypes.StateUpdate && eventArgument != null) {
+                    if (eventArgument.Started === true) {
+                        allEvents.push({ eventType: SeederEventTypes.Processing, eventArg: null });
+                    } else if (eventArgument.Stopped === true) {
+                        allEvents.push({ eventType: SeederEventTypes.Stopped, eventArg: null });
                     }
                 }
-            });
-            setTimeout(getState, delay);
-        }
 
-        var startMonitoring = function () {
-            // todo: these elements should exist inside the ui elements container
-            $(".sm-loading").show();
-            $(".sm-content").hide();
-            getState();
-        }
+                // propogate the event to all elements
+                for (var i = 0; i < allElements.length; i++) {
+                    for (var j = 0; j < allEvents.length; j++) {
+                        var localEvent = allEvents[j];
+                        allElements[i].HandleSeederEvent(localEvent.eventType, localEvent.eventArg);
+                    }
+                }
+            }
+
+            return {
+                SeederContainer: uiContainer,
+                HandleSeederEvent: handleEvent,
+                BindStartAndStopEvents: function(startEvent, stopEvent) {
+                    start.BindClickEvent(startEvent);
+                    stop.BindClickEvent(stopEvent);
+                }
+            }
+        }(moduleContainerId); // instantiate the ui elements container
+
+        // allows for events to be published from the controller service to the ui container
+        var eventPublisher = function() {
+            return {
+                publish: function(eventType, eventArgs) {
+                    uiElements.HandleSeederEvent(eventType, eventArgs);
+                }
+            }
+        }();
+
+        // define the functions for interacting with the controller
+        var controllerService = function(controllerEventPublisher) {
+            var startUrl = "/PersonSeeder/StartSeeding";
+            var stopUrl = "/PersonSeeder/StopSeeding";
+
+            var successHandler = function(data) {
+                if (data.Started === true) {
+                    controllerEventPublisher.publish(SeederEventTypes.Processing);
+                }
+                if (data.Stopped === true) {
+                    controllerEventPublisher.publish(SeederEventTypes.Stopped);
+                } else if (data.Errored === true) {
+                    controllerEventPublisher.publish(SeederEventTypes.Errored, data.ErrorMessage);
+                } else {
+                    console.log("Unknown state from api" + data);
+                }
+
+                // push logs if possible
+                if (data.LogMessages !== null && data.LogMessages.length !== 0) {
+                    controllerEventPublisher.publish(SeederEventTypes.Logs, data.LogMessages);
+                }
+            }
+
+            var errorHandler = function (data) {
+                controllerEventPublisher.publish(SeederEventTypes.Errored, data);
+            }
+
+            // create a recursive function for pulling the current state
+            var stateMonitor = (function() {
+                var stateUrl = "/PersonSeeder/GetState";
+                var delay = 5000;
+
+                var getState = function() {
+                    $.ajax({
+                        url: stateUrl,
+                        datatype: "text",
+                        type: "POST",
+                        success: successHandler,
+                        error: errorHandler,
+                        complete: function() {
+                            // todo: do not like having ui related code in here....
+                            if ($(".sm-loading").is(":visible")) {
+                                $(".sm-loading").hide();
+                            }
+                            if ($(".sm-content").is(":hidden")) {
+                                $(".sm-content").show();
+                            }
+                        }
+                    });
+
+                    // recursively call self
+                    setTimeout(getState, delay);
+                }
+
+                return {
+                    startMonitoring: function() {
+                        // todo: these should exist in the ui module
+                        $(".sm-loading").show();
+                        $(".sm-content").hide();
+                        getState();
+                    }
+                }
+            })();
+            stateMonitor.startMonitoring();
+
+            return {
+                startSeeding: function() {
+                    $.ajax({ url: startUrl, type: "POST", success: successHandler, error: errorHandler });
+                },
+                stopSeeding: function() {
+                    $.ajax({ url: stopUrl, type: "POST", success: successHandler, error: errorHandler });
+                }
+            }
+        }(eventPublisher);
+
+        // wire up the ui elements 
+        uiElements.BindStartAndStopEvents(controllerService.startSeeding, controllerService.stopSeeding);
+
         return {
-            Start: startMonitoring
+            start: controllerService.startSeeding,
+            stop: controllerService.stopSeeding
         }
-    })(moduleElements.HandleStateUpdate);
-
-    // wire up the ui elements 
-    moduleElements.BindStartAndStopEvents(controllerService.StartSeeding, controllerService.StopSeeding);
-
-    stateMonitor.Start();
+    }); // do not instantiate
 
     return {
-        start: controllerService.StartSeeding,
-        stop: controllerService.StopSeeding
+        create: createSeederModule
     }
-});
+})(jQuery, UtilityService);

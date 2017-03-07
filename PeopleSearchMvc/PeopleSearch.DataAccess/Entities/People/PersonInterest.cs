@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PeopleSearch.DataAccess
+namespace PeopleSearch.DataAccess.Entities.People
 {
     public class PersonInterest
     {

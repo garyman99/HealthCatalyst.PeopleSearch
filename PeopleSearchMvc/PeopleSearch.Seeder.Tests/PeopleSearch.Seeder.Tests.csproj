@@ -79,10 +79,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PeopleSearch.Seeder.Console\PeopleSearch.Seeder.Console.csproj">
-      <Project>{0CE442C1-5CC1-4DDF-B6BC-657145736CB3}</Project>
-      <Name>PeopleSearch.Seeder.Console</Name>
-    </ProjectReference>
     <ProjectReference Include="..\src\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj">
       <Project>{884DF3E5-8762-4CBA-95AB-931E7557974E}</Project>
       <Name>PeopleSearch.Seeder</Name>

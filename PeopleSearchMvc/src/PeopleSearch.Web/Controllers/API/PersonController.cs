@@ -1,124 +1,81 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Http;
 using Newtonsoft.Json;
-using PeopleSearch.DataAccess;
+using PeopleSearch.DataAccess.Repositories;
+using PeopleSearch.Web.Models;
 
 namespace PeopleSearch.Web.Controllers.API
 {
     public class PersonController : ApiController
     {
-        private readonly PeopleSearchContext _context;
+        private readonly IPersonRepository _repository;
 
-        public PersonController(PeopleSearchContext context)
+        public PersonController(IPersonRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/Person/search
-        public string Get(string searchString)
+        public string Get(string searchString, bool byInterest = false)
         {
-            var matches = _context.People.Where(p => p.FirstName.Contains(searchString)
-                                                     || p.LastName.Contains(searchString)).ToList();
-            
-            return JsonConvert.SerializeObject(matches);
+            var matches = byInterest
+                ? _repository.FindByInterest(searchString)
+                : _repository.FindByName(searchString);
+
+            var models = new List<PersonModel>();
+            foreach (var match in matches)
+            {
+                var model = new PersonModel(match.Id,
+                    match.FirstName,
+                    match.LastName,
+                    match.DateOfBirth,
+                    match.Interests?.Select(i => i.Interest).ToArray(),
+                    match.Image?.ImageBase64);
+                models.Add(model);
+            }
+
+            // introduce some fake delay
+            Thread.Sleep(3000);
+
+            var jsonResult = JsonConvert.SerializeObject(models.ToArray());
+            return jsonResult;
         }
 
         // GET: api/Person/5
         public string Get(int id)
         {
-            var person = _context.People.FirstOrDefault(p => p.Id == id);
+            PersonModel model = null;
+            var match = _repository.GetById(id);
+            if (match != null)
+            {
+                model = new PersonModel(match.Id,
+                    match.FirstName,
+                    match.LastName,
+                    match.DateOfBirth,
+                    match.Interests?.Select(i => i.Interest).ToArray(),
+                    match.Image?.ImageBase64);
+            }
 
-            return JsonConvert.SerializeObject(person);
+            return JsonConvert.SerializeObject(model);
         }
 
-        // POST: api/Person
-        public void Post([FromBody]string value)
+        // POST: api/Person/1
+        public void Post([FromBody] BigCompany.Contracts.Person value)
         {
             // modify or update an existing person
-
             if (value == null)
             {
                 return;
             }
-
-            var dtoPerson = JsonConvert.DeserializeObject<BigCompany.Contracts.Person>(value);
-            if (dtoPerson != null)
-            {
-                var dataAccessPerson = _context.People.FirstOrDefault(p => p.Id == dtoPerson.Id);
-                if (dataAccessPerson == null)
-                {
-                    // create new entity
-                    Put(value);
-                }
-                else
-                {
-                    // update the existing entity
-                    dataAccessPerson.DateOfBirth = dtoPerson.DateOfBirth;
-                    dataAccessPerson.FirstName = dtoPerson.FirstName;
-                    dataAccessPerson.LastName = dtoPerson.LastName;
-                    dataAccessPerson.Interests.Clear();
-                    // todo: separate API calls for posting image(s)
-                    if (string.IsNullOrEmpty(dtoPerson.ImageBase64) == false)
-                    {
-                        dataAccessPerson.Images.Add(new PersonImage { ImageBase64 = dtoPerson.ImageBase64 });
-                    }
-                    // todo: separate API calls for posting interests  ex: /api/person/1/interests/1
-                    foreach (var dtoInterest in dtoPerson.Interests)
-                    {
-                        dataAccessPerson.Interests.Add(new PersonInterest { Interest = dtoInterest });
-                    }
-                    _context.SaveChanges();
-                }
-            }
-        }
-
-        // PUT: api/Person/
-        public void Put([FromBody]string value)
-        {
-            // create a new person (or overwrite)--the result of this call should always be the same!
-
-            if (value == null)
-            {
-                return;
-            }
-
-            var dtoPerson = JsonConvert.DeserializeObject<BigCompany.Contracts.Person>(value);
-            if (dtoPerson != null)
-            {
-                // verify we don't have an existing data access object
-                Delete(dtoPerson.Id);
-
-                // create our new data access object
-                var dataAccessPerson = new Person
-                {
-                    DateOfBirth = dtoPerson.DateOfBirth,
-                    FirstName = dtoPerson.FirstName,
-                    LastName = dtoPerson.LastName,
-                    Interests = new List<PersonInterest>()
-                };
-                if (string.IsNullOrEmpty(dtoPerson.ImageBase64) == false)
-                {
-                    dataAccessPerson.Images.Add(new PersonImage {ImageBase64 = dtoPerson.ImageBase64});
-                }
-                foreach (var dtoInterest in dtoPerson.Interests)
-                {
-                    dataAccessPerson.Interests.Add(new PersonInterest { Interest = dtoInterest });
-                }
-                _context.People.Add(dataAccessPerson);
-                _context.SaveChanges();
-            }
+             _repository.Add(value);
         }
 
         // DELETE: api/Person/5
         public void Delete(int id)
         {
-            var person = _context.People.FirstOrDefault(p => p.Id == id);
-            if (person != null)
-            {
-                _context.People.Remove(person);
-                _context.SaveChanges();
-            }
+            _repository.Delete(id);
         }
     }
 }
