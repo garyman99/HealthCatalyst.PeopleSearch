@@ -62,7 +62,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BigCompany.Contracts\BigCompany.Contracts.csproj">
+    <ProjectReference Include="..\external\BigCompany.Contracts\BigCompany.Contracts.csproj">
       <Project>{3a26eca1-2c30-4e2e-a64f-2ae120bb77fa}</Project>
       <Name>BigCompany.Contracts</Name>
     </ProjectReference>

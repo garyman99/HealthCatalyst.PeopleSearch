@@ -79,7 +79,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj">
+    <ProjectReference Include="..\..\PeopleSearch.Seeder\PeopleSearch.Seeder.csproj">
       <Project>{884DF3E5-8762-4CBA-95AB-931E7557974E}</Project>
       <Name>PeopleSearch.Seeder</Name>
     </ProjectReference>

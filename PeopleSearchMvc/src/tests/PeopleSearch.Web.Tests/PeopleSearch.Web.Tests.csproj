@@ -129,7 +129,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BigCompany.Contracts\BigCompany.Contracts.csproj">
+    <ProjectReference Include="..\..\external\BigCompany.Contracts\BigCompany.Contracts.csproj">
       <Project>{3a26eca1-2c30-4e2e-a64f-2ae120bb77fa}</Project>
       <Name>BigCompany.Contracts</Name>
     </ProjectReference>
@@ -137,7 +137,7 @@
       <Project>{E7B67399-F948-455F-B9C5-87086D77E2C0}</Project>
       <Name>PeopleSearch.DataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PeopleSearch.Web\PeopleSearch.Web.csproj">
+    <ProjectReference Include="..\..\PeopleSearch.Web\PeopleSearch.Web.csproj">
       <Project>{27E3B6AC-6627-4CAA-8178-62FB97461981}</Project>
       <Name>PeopleSearch.Web</Name>
     </ProjectReference>

@@ -309,11 +309,11 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BigCompany.Contracts\BigCompany.Contracts.csproj">
+    <ProjectReference Include="..\external\BigCompany.Contracts\BigCompany.Contracts.csproj">
       <Project>{3a26eca1-2c30-4e2e-a64f-2ae120bb77fa}</Project>
       <Name>BigCompany.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\PeopleSearch.DataAccess\PeopleSearch.DataAccess.csproj">
+    <ProjectReference Include="..\PeopleSearch.DataAccess\PeopleSearch.DataAccess.csproj">
       <Project>{E7B67399-F948-455F-B9C5-87086D77E2C0}</Project>
       <Name>PeopleSearch.DataAccess</Name>
     </ProjectReference>
